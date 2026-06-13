@@ -26,7 +26,11 @@ Use exactly these markdown sections:
 ## 7. What NOT to build (non-goals)
 
 Be concrete and implementation-ready. Resolve disagreements between the Architect and \
-Critic explicitly. Do not invent facts beyond the debate."""
+Critic explicitly. Do not invent facts beyond the debate.
+
+Section 4 MUST be Nebius-native: name Serverless Endpoints, Serverless Jobs, Object \
+Storage (S3-compatible), and Nebius AI Studio / Token Factory inference. Do NOT \
+reference AWS/GCP/Azure services (no Lambda, AWS S3, API Gateway, DynamoDB, SQS)."""
 
 
 def _transcript(state: DebateState) -> str:
