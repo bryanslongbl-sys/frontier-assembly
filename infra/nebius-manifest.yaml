@@ -1,0 +1,47 @@
+# Declarative Nebius Serverless deployment for Frontier Assembly.
+# Two primitives: a thin always-on Endpoint that triggers an ephemeral Job.
+#
+#   nebius serverless endpoint create -f infra/nebius-manifest.yaml
+#   # the endpoint launches the Job below per request (JOB_ID + INPUT_KEY injected)
+#
+# Adjust image registry paths, bucket, and region to your Nebius project.
+
+endpoint:
+  name: frontier-assembly-endpoint
+  image: cr.nebius.cloud/frontier-assembly/endpoint:latest
+  port: 8000
+  resources:
+    cpu: 1
+    memory: 1Gi
+  env:
+    - name: NEBIUS_S3_ENDPOINT
+      value: https://storage.eu-north1.nebius.cloud:443
+    - name: S3_BUCKET
+      value: frontier-assembly
+    - name: NEBIUS_JOB_MANIFEST
+      value: infra/nebius-job.yaml
+  secrets:
+    - NEBIUS_API_KEY
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+
+job:
+  name: frontier-assembly-job
+  image: cr.nebius.cloud/frontier-assembly/job:latest
+  resources:
+    cpu: 2
+    memory: 4Gi
+  maxRuntimeSeconds: 600           # hard ceiling; debate normally finishes in ~90s
+  env:
+    - name: NEBIUS_S3_ENDPOINT
+      value: https://storage.eu-north1.nebius.cloud:443
+    - name: S3_BUCKET
+      value: frontier-assembly
+    - name: USE_CROSS_VENDOR
+      value: "0"                   # all-Nebius by default
+  secrets:
+    - NEBIUS_API_KEY
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+    # add OPENAI_API_KEY / ANTHROPIC_API_KEY / XAI_API_KEY / GEMINI_API_KEY
+    # only when USE_CROSS_VENDOR=1

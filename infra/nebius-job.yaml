@@ -1,0 +1,12 @@
+apiVersion: serverless.nebius.ai/v1
+kind: Job
+spec:
+  container:
+    image: cr.nebius.cloud/frontier-assembly/job:latest
+    resources:
+      cpu: 2
+      memory: 4Gi
+  env:
+    - name: NEBIUS_S3_ENDPOINT
+      value: https://storage.ai.nebius.cloud
+  maxRuntimeSeconds: 600
