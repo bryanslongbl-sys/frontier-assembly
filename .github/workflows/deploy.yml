@@ -1,0 +1,75 @@
+name: Build & push images to Nebius
+
+# Builds the endpoint + job container images in the cloud and pushes them to the
+# Nebius Container Registry (cr.ai.nebius.cloud) on every push to main. No local
+# Docker required. Until the registry secrets are set the push is skipped (the run
+# still passes green) — see docs/DEPLOY.md for the one-time setup.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      REGISTRY_HOST: cr.ai.nebius.cloud
+      NEBIUS_REGISTRY: ${{ secrets.NEBIUS_REGISTRY }}        # e.g. cr.ai.nebius.cloud/<registry-id>
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check Nebius registry is configured
+        id: cfg
+        run: |
+          if [ -z "${NEBIUS_REGISTRY}" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::NEBIUS_REGISTRY secret not set yet — building only, skipping push. See docs/DEPLOY.md."
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Nebius Container Registry
+        if: steps.cfg.outputs.configured == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY_HOST }}
+          username: ${{ secrets.NEBIUS_REGISTRY_USERNAME }}
+          password: ${{ secrets.NEBIUS_REGISTRY_PASSWORD }}
+
+      - name: Build & push endpoint image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: endpoint/Dockerfile.endpoint
+          push: ${{ steps.cfg.outputs.configured == 'true' }}
+          tags: |
+            ${{ env.NEBIUS_REGISTRY }}/frontier-assembly-endpoint:latest
+            ${{ env.NEBIUS_REGISTRY }}/frontier-assembly-endpoint:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build & push job image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: job/Dockerfile.job
+          push: ${{ steps.cfg.outputs.configured == 'true' }}
+          tags: |
+            ${{ env.NEBIUS_REGISTRY }}/frontier-assembly-job:latest
+            ${{ env.NEBIUS_REGISTRY }}/frontier-assembly-job:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Summary
+        run: |
+          if [ "${{ steps.cfg.outputs.configured }}" = "true" ]; then
+            echo "Pushed frontier-assembly-endpoint + frontier-assembly-job to ${NEBIUS_REGISTRY}" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Images built successfully (push skipped — set NEBIUS_REGISTRY secrets to enable). See docs/DEPLOY.md." >> "$GITHUB_STEP_SUMMARY"
+          fi
