@@ -26,9 +26,11 @@ jobs:
         run: |
           if [ -z "${NEBIUS_REGISTRY}" ]; then
             echo "configured=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::NEBIUS_REGISTRY secret not set yet — building only, skipping push. See docs/DEPLOY.md."
+            echo "prefix=local" >> "$GITHUB_OUTPUT"
+            echo "::notice::NEBIUS_REGISTRY secret not set yet — building only (local tag), skipping push. See docs/DEPLOY.md."
           else
             echo "configured=true" >> "$GITHUB_OUTPUT"
+            echo "prefix=${NEBIUS_REGISTRY}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Set up Docker Buildx
@@ -49,8 +51,8 @@ jobs:
           file: endpoint/Dockerfile.endpoint
           push: ${{ steps.cfg.outputs.configured == 'true' }}
           tags: |
-            ${{ env.NEBIUS_REGISTRY }}/frontier-assembly-endpoint:latest
-            ${{ env.NEBIUS_REGISTRY }}/frontier-assembly-endpoint:${{ github.sha }}
+            ${{ steps.cfg.outputs.prefix }}/frontier-assembly-endpoint:latest
+            ${{ steps.cfg.outputs.prefix }}/frontier-assembly-endpoint:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -61,8 +63,8 @@ jobs:
           file: job/Dockerfile.job
           push: ${{ steps.cfg.outputs.configured == 'true' }}
           tags: |
-            ${{ env.NEBIUS_REGISTRY }}/frontier-assembly-job:latest
-            ${{ env.NEBIUS_REGISTRY }}/frontier-assembly-job:${{ github.sha }}
+            ${{ steps.cfg.outputs.prefix }}/frontier-assembly-job:latest
+            ${{ steps.cfg.outputs.prefix }}/frontier-assembly-job:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
