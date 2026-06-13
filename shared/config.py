@@ -19,9 +19,10 @@ NEBIUS_BASE_URL = os.getenv("NEBIUS_BASE_URL", "https://api.tokenfactory.nebius.
 USE_CROSS_VENDOR = os.getenv("USE_CROSS_VENDOR", "0") == "1"
 
 # All-Nebius default: one key, fully reproducible, showcases Nebius models end-to-end.
+# Verified available on Token Factory 2026-06-13 (3 distinct vendors: Meta + Google).
 NEBIUS_ONLY_MAP = {
     "architect":   {"provider": "nebius", "model": os.getenv("ARCHITECT_MODEL", "meta-llama/Llama-3.3-70B-Instruct")},
-    "critic":      {"provider": "nebius", "model": os.getenv("CRITIC_MODEL", "Qwen/Qwen2.5-72B-Instruct")},
+    "critic":      {"provider": "nebius", "model": os.getenv("CRITIC_MODEL", "google/gemma-3-27b-it")},
     "synthesizer": {"provider": "nebius", "model": os.getenv("SYNTH_MODEL", "meta-llama/Llama-3.3-70B-Instruct")},
 }
 
@@ -41,7 +42,7 @@ ROLE_ORDER = ["architect", "critic", "synthesizer"]
 MAX_ROUNDS = int(os.getenv("MAX_ROUNDS", "2"))
 
 # Per-call model limits.
-MODEL_TIMEOUT = float(os.getenv("MODEL_TIMEOUT", "60"))
+MODEL_TIMEOUT = float(os.getenv("MODEL_TIMEOUT", "180"))
 MAX_TOKENS = int(os.getenv("MAX_TOKENS", "1500"))
 TEMPERATURE = float(os.getenv("TEMPERATURE", "0.5"))
 

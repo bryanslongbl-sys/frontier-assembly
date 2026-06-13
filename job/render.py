@@ -10,6 +10,7 @@ from __future__ import annotations
 from shared.config import MAX_TOKENS, MODEL_MAP
 from shared.schemas import DebateState
 from job.models.router import ModelRouter
+from job.resilience import call_with_retry
 
 _SYNTH_INSTRUCTION = """You are the Product Synthesizer. Read the full multi-model debate \
 below and write the FINAL product brief. This is a decision artifact, not a transcript.
@@ -47,8 +48,31 @@ def synthesize_brief_body(state: DebateState, router: ModelRouter) -> str:
             ),
         },
     ]
-    text, _, _ = router.chat(cfg["provider"], cfg["model"], messages, max_tokens=MAX_TOKENS * 2)
-    return text.strip()
+    try:
+        text, _, _ = call_with_retry(
+            lambda: router.chat(cfg["provider"], cfg["model"], messages, max_tokens=MAX_TOKENS * 2)
+        )
+        if text.strip():
+            return text.strip()
+    except Exception:  # noqa: BLE001 - degrade to a deterministic brief, never crash the run
+        pass
+    return _fallback_body(state)
+
+
+def _fallback_body(state: DebateState) -> str:
+    """Deterministic brief assembled from the last synthesizer turns when the live
+    synthesis call is unavailable — so a run ALWAYS yields a usable artifact."""
+    synth = [t.content for t in state.turns if t.agent == "synthesizer" and not t.degraded]
+    architect = [t.content for t in state.turns if t.agent == "architect" and not t.degraded]
+    critic = [t.content for t in state.turns if t.agent == "critic" and not t.degraded]
+    section = lambda items: "\n\n".join(items) if items else "_(no successful turns)_"
+    return (
+        "> _Final synthesis model was unavailable; this brief is assembled "
+        "deterministically from the debate._\n\n"
+        "## 1. Executive Summary\n\n" + section(synth[-1:]) + "\n\n"
+        "## 2. Architect's Direction\n\n" + section(architect[-1:]) + "\n\n"
+        "## 3. Critic's Risks\n\n" + section(critic[-1:])
+    )
 
 
 def render_brief(state: DebateState, router: ModelRouter) -> str:

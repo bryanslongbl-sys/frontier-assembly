@@ -65,7 +65,7 @@ ephemeral Job survives cold starts, retries, and partial failures.
 | Role | Default (all-Nebius) | Cross-frontier mode |
 | --- | --- | --- |
 | 🏛 Architect | Llama-3.3-70B (Nebius) | Claude (Anthropic) |
-| 🔬 Critic | Qwen2.5-72B (Nebius) | GPT-4o (OpenAI) |
+| 🔬 Critic | Gemma-3-27B (Nebius) | GPT-4o (OpenAI) |
 | 🧩 **Synthesizer** | **Llama-3.3-70B (Nebius)** | **Nebius-native model** |
 
 The **Nebius-native model is always the Synthesizer** — it gets the final word and writes
