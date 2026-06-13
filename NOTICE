@@ -1,0 +1,35 @@
+Frontier Assembly
+Copyright (c) 2026 Aurum Nebula LLC
+Licensed under the MIT License (see LICENSE).
+
+------------------------------------------------------------------------------
+Third-party models & attribution
+------------------------------------------------------------------------------
+
+This product is "Built with Llama." The default lineup uses Meta Llama 3.3 models
+served via Nebius AI Cloud. Llama is (c) Meta Platforms, Inc., provided under the
+Llama 3.3 Community License Agreement; use is subject to the Llama Acceptable Use
+Policy.
+
+This product uses Google Gemma (Gemma 3) models served via Nebius AI Cloud, subject
+to the Gemma Terms of Use and the Gemma Prohibited Use Policy.
+
+Optional configurations may use Qwen models (Apache License 2.0) and, in cross-vendor
+mode, third-party hosted APIs (OpenAI, Anthropic, Google, xAI, Meta) under their
+respective Terms of Service, using credentials supplied by the operator.
+
+------------------------------------------------------------------------------
+Output & data handling
+------------------------------------------------------------------------------
+
+This repository ships SOURCE CODE, not model outputs. Operators supply their own API
+keys and are responsible for complying with each provider's Terms of Service and
+Acceptable Use Policy.
+
+The only model outputs committed to this repository are example briefs under
+examples/, generated exclusively with the open / Nebius-hosted models named above
+(Llama 3.3, Gemma 3), whose terms permit such use.
+
+This tool does NOT collect, retain, or use model outputs to train, fine-tune,
+distill, or develop any AI model. Doing so is prohibited by most providers' terms;
+operators must not repurpose this template for that.

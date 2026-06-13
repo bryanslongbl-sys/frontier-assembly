@@ -140,6 +140,26 @@ nebius-frontier-assembly/
 
 ---
 
+## Legal, Acceptable Use & Attribution
+
+> _Informational, not legal advice._
+
+- **Bring your own keys.** This template ships **code, not model outputs**. You supply your
+  own API keys and are responsible for complying with each provider's Terms of Service and
+  Acceptable Use Policy.
+- **No training on outputs.** Do **not** use this tool, its debates, or its briefs to train,
+  fine-tune, distill, or develop competing AI models. Most providers prohibit it — respect it.
+- **Outputs are AI-generated design documents**, provided "as is" with no warranty (see
+  [`LICENSE`](LICENSE)). Validate before relying on them.
+- **Built with Llama** (Meta Llama 3.3) and **Gemma** (Google) — the default open-weight models,
+  served via Nebius. Committed example briefs use only these open / Nebius-hosted models. Their
+  respective licenses (Llama 3.3 Community License + AUP; Gemma Terms + Prohibited Use Policy)
+  apply. See [`NOTICE`](NOTICE).
+- **Sanctions.** Routing is limited to Western providers + native Nebius endpoints; operators
+  attest they are not located in a sanctioned/restricted jurisdiction.
+
+---
+
 ## Built by Aurum Nebula LLC — with the Frontier Assembly Swarm 🛰️
 
 This project was **itself** designed agentically: a collaborative circle of frontier
