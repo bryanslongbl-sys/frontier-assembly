@@ -2,6 +2,8 @@
 
 **Multi-model brainstorming debates with zero idle compute, on Nebius Serverless.**
 
+> 🏆 Submitted to the **Nebius Serverless AI Builders Challenge** (2026).
+
 Submit a raw idea → a thin Serverless **Endpoint** spins up a Serverless **Job** → three
 AI agents (**Architect → Critic → Synthesizer**) debate it across rounds → a
 decision-grade product brief lands in **Object Storage** → the Job terminates. You pay
